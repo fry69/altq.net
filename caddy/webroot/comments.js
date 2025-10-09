@@ -3,7 +3,7 @@ class BlueskyCommentsSection extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
-    this.visibleCount = 20;
+    this.visibleCount = 50;
     this.thread = null;
     this.hiddenReplies = null;
     this.error = null;
