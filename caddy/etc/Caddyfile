@@ -6,6 +6,15 @@
 }
 
 *.altq.net, altq.net {
+	# Workaround for UK age restriction
+	# Source: https://gist.github.com/mary-ext/6e27b24a83838202908808ad528b3318#method-5-self-hosted-pds
+	handle /xrpc/app.bsky.unspecced.getAgeAssuranceState {
+		header content-type "application/json"
+		header access-control-allow-headers "authorization,dpop,atproto-accept-labelers,atproto-proxy"
+		header access-control-allow-origin "*"
+		respond `{"lastInitiatedAt":"2025-07-14T14:22:43.912Z","status":"assured"}` 200
+	}
+
 	tls {
 		on_demand
 	}
@@ -27,7 +36,7 @@
 	}
 	reverse_proxy @pds http://localhost:3000
 
-	# Serve your custom website for all other requests  
+	# Serve your custom website for all other requests
 	root * /srv/webroot
 	file_server
 }
