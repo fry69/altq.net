@@ -4,3 +4,4 @@
 - feat: add UK age restriction bypass
 - fix: up shown comments to 50
 - fix: defer comments script
+- update readme
