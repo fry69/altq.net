@@ -15,6 +15,7 @@ Generate a simple, attractive HTML status page showing:
 - PDS version retrieved from health endpoint
 - Number of accounts and each account's DID
 - Per-account store record/blob counts (from read-only SQLite)
+- Estimated CAR export size for each repository
 - Disk usage for each blocks directory by DID
 
 Requires:
@@ -34,6 +35,11 @@ import psutil
 import requests
 from datetime import datetime, timedelta
 from jinja2 import Environment
+
+
+# Deterministic CAR layout constants derived from repo implementation
+CAR_HEADER_TOTAL_BYTES = 59  # varint(58) + 58-byte dag-cbor header
+CAR_BLOCK_CID_BYTES = 36  # CIDv1/sha256 byte length used in CAR streams
 
 
 def parse_env_file(file_path):
@@ -145,7 +151,7 @@ def find_store_db(pds_path, did):
 
 
 def get_store_data(pds_path, did):
-    """Get record and blob counts from a store database."""
+    """Get record/blob counts and repo CAR size estimate from a store database."""
     store_db = find_store_db(pds_path, did)
     if not store_db:
         raise FileNotFoundError(f"store.sqlite not found for DID {did}")
@@ -160,8 +166,45 @@ def get_store_data(pds_path, did):
     cur.execute("SELECT COUNT(*) FROM blob")
     blob_count = cur.fetchone()[0]
 
+    car_size_bytes = estimate_car_size_bytes(cur)
+
     conn.close()
-    return rec_count, blob_count
+    return rec_count, blob_count, car_size_bytes
+
+
+def estimate_car_size_bytes(cur):
+    """Reproduce repo->CAR sizing logic without reading blocks into memory."""
+    # Sum block payloads, count rows, and get total varint overhead in a single query
+    cur.execute(
+        """
+        SELECT
+            COALESCE(SUM(size), 0) AS total_size,
+            COUNT(*) AS block_count,
+            COALESCE(SUM(
+                CASE
+                    WHEN size + ? < 128 THEN 1
+                    WHEN size + ? < 16384 THEN 2
+                    WHEN size + ? < 2097152 THEN 3
+                    WHEN size + ? < 268435456 THEN 4
+                    ELSE 5
+                END
+            ), 0) AS varint_bytes
+        FROM repo_block
+        """,
+        (CAR_BLOCK_CID_BYTES,) * 4,
+    )
+    total_size, block_count, varint_bytes = cur.fetchone()
+    total_size = total_size or 0
+    block_count = block_count or 0
+    varint_bytes = varint_bytes or 0
+
+    # Total CAR = header + payload + CID bytes per block + length-prefix varints
+    return (
+        CAR_HEADER_TOTAL_BYTES
+        + total_size
+        + block_count * CAR_BLOCK_CID_BYTES
+        + varint_bytes
+    )
 
 
 def get_directory_usage(path):
@@ -227,15 +270,23 @@ def get_template():
                     <th>Record Count</th>
                     <th>Blob Count</th>
                     <th>Blocks Dir Size</th>
+                    <th>Repo CAR Size (est)</th>
                 </tr>
             </thead>
             <tbody>
-                {% for did, rec, blob, size in usage_list %}
+                {% for did, rec, blob, size, car_size in usage_list %}
                 <tr>
                     <td>{{ did }}</td>
                     <td>{{ rec }}</td>
                     <td>{{ blob }}</td>
                     <td>{{ human_size(size) }}</td>
+                    <td>
+                        {% if car_size == "Error" %}
+                            Error
+                        {% else %}
+                            {{ human_size(car_size) }}
+                        {% endif %}
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -286,13 +337,13 @@ def main():
 
     for did in dids:
         try:
-            rec_count, blob_count = get_store_data(pds_data_directory, did)
+            rec_count, blob_count, car_size = get_store_data(pds_data_directory, did)
         except Exception:
-            rec_count, blob_count = "Error", "Error"
+            rec_count, blob_count, car_size = "Error", "Error", "Error"
 
         block_dir = os.path.join(pds_blobstore_disk_location, did)
         size = get_directory_usage(block_dir) if os.path.isdir(block_dir) else 0
-        usage_list.append((did, rec_count, blob_count, size))
+        usage_list.append((did, rec_count, blob_count, size, car_size))
 
     # Sort usage_list by record count in descending order
     # Convert string 'Error' to -1 for sorting purposes

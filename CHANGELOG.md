@@ -1,4 +1,10 @@
-### 2025-10-09
+# Changelog
+
+## 2025-10-25
+
+- feat: add CAR estimate
+
+## 2025-10-09
 
 - ignore some local files and folders
 - feat: add UK age restriction bypass
