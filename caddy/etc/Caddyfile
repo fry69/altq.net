@@ -19,6 +19,23 @@
 		on_demand
 	}
 
+	# Allow two factor authentication using gatekeeper
+	# https://tangled.org/@baileytownsend.dev/pds-gatekeeper
+	@gatekeeper {
+		path /xrpc/com.atproto.server.getSession
+		path /xrpc/com.atproto.server.updateEmail
+		path /xrpc/com.atproto.server.createSession
+		path /xrpc/com.atproto.server.createAccount
+		path /@atproto/oauth-provider/~api/sign-in
+	}
+
+	handle @gatekeeper {
+		reverse_proxy http://localhost:8080 {
+			# Makes sure the cloudflare ip is proxied and able to be picked up by pds gatekeeper
+			#			    header_up X-Forwarded-For {http.request.header.CF-Connecting-IP}
+		}
+	}
+
 	# Route these paths requests to the PDS service
 	# /xrpc/
 	# /@atproto/

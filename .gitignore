@@ -5,3 +5,4 @@ output
 .ansible
 .pyscn*
 live
+pds.env

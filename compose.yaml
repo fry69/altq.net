@@ -40,3 +40,16 @@ services:
     environment:
       WATCHTOWER_CLEANUP: true
       WATCHTOWER_SCHEDULE: "@midnight"
+  gatekeeper:
+    container_name: gatekeeper
+    image: fatfingers23/pds_gatekeeper:latest
+    network_mode: host
+    restart: unless-stopped
+    # This gives the container to the access to the PDS folder.
+    # Source is the location on your server of that directory.
+    volumes:
+      - type: bind
+        source: /pds
+        target: /pds
+    depends_on:
+      - pds
