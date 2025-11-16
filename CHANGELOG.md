@@ -1,5 +1,9 @@
 # Changelog
 
+## 2025-11-15
+
+feat: add 2FA using gatekeeper
+
 ## 2025-10-25
 
 - feat: add CAR estimate
