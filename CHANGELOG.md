@@ -1,5 +1,9 @@
 # Changelog
 
+## 2025-11-16
+
+feat: add redacted pds.env
+
 ## 2025-11-15
 
 feat: add 2FA using gatekeeper
