@@ -14,12 +14,12 @@ $(error "No .env file found. Please copy .env.example to .env and fill it out.")
 endif
 
 include .env
-## Exporting environment variables to sub-shells is not neccessary
-# export 
+## Exporting environment variables to sub-shells is not necessary
+# export
 
 all: copy-status copy-caddy install-timer
 
-copy-status: 
+copy-status:
 	scp bin/generate-status.py $(SSH_HOSTNAME):$(dir $(STATUS_SCRIPT_PATH))
 
 copy-caddy: fmt

@@ -1,5 +1,9 @@
 # Changelog
 
+## 2025-11-17
+
+docs: add link to official installation instructions
+
 ## 2025-11-16
 
 feat: add redacted pds.env

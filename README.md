@@ -1,5 +1,7 @@
 ## PDS Modifications for https://altq.net
 
+Please read the official PDS installation [README](https://github.com/bluesky-social/pds/blob/main/README.md) first.
+
 Goals:
 - allow serving a custom web page on the PDS root
 - generate a status page for the PDS including account usage
