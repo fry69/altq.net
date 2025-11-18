@@ -1,16 +1,20 @@
 # Changelog
 
+## 2025-11-18
+
+- chore: switch to maintained watchtower fork
+
 ## 2025-11-17
 
-docs: add link to official installation instructions
+- docs: add link to official installation instructions
 
 ## 2025-11-16
 
-feat: add redacted pds.env
+- feat: add redacted pds.env
 
 ## 2025-11-15
 
-feat: add 2FA using gatekeeper
+- feat: add 2FA using gatekeeper
 
 ## 2025-10-25
 
