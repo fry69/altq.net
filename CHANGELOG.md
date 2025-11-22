@@ -1,5 +1,9 @@
 # Changelog
 
+## 2025-11-22
+
+- feat: switch Docker to user defined networking
+
 ## 2025-11-18
 
 - chore: switch to maintained watchtower fork

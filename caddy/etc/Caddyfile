@@ -1,7 +1,7 @@
 {
 	email fry@fry69.dev
 	on_demand_tls {
-		ask http://localhost:3000/tls-check
+		ask http://pds:3000/tls-check
 	}
 }
 
@@ -30,7 +30,7 @@
 	}
 
 	handle @gatekeeper {
-		reverse_proxy http://localhost:8080 {
+		reverse_proxy http://gatekeeper:8080 {
 			# Makes sure the cloudflare ip is proxied and able to be picked up by pds gatekeeper
 			#			    header_up X-Forwarded-For {http.request.header.CF-Connecting-IP}
 		}
@@ -51,7 +51,7 @@
 		path /robots.txt
 		path /account/*
 	}
-	reverse_proxy @pds http://localhost:3000
+	reverse_proxy @pds http://pds:3000
 
 	# Serve your custom website for all other requests
 	root * /srv/webroot
