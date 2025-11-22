@@ -30,7 +30,6 @@
         src: caddy/etc/Caddyfile
         dest: "{{ pds_directory }}/caddy/etc/caddy/Caddyfile"
         mode: "0644"
-      notify: restart caddy
       tags: [caddy]
 
     - name: Deploy Caddy webroot assets
@@ -87,9 +86,3 @@
     - name: reload systemd
       ansible.builtin.systemd:
         daemon_reload: true
-
-    - name: restart caddy
-      ansible.builtin.systemd:
-        name: "{{ caddy_systemd_service }}"
-        state: restarted
-      when: caddy_systemd_service | length > 0

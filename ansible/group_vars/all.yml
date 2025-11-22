@@ -9,7 +9,6 @@ status_service_name: status-report
 status_timer_name: status-report
 
 pds_systemd_service: pds
-caddy_systemd_service: ""
 
 # Feature toggles
 status_run_once: false
