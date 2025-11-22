@@ -1,0 +1,8 @@
+[Unit]
+Description=Generate server status HTML page
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/env python3 {{ status_script_path }} --pds-config {{ pds_env_path }} --output {{ status_output_path }}
+User=root

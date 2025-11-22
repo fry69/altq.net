@@ -3,6 +3,7 @@
 ## 2025-11-22
 
 - feat: switch Docker to user defined networking
+- feat: switch to provisioning with Ansible
 
 ## 2025-11-18
 

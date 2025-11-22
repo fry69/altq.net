@@ -1,0 +1,10 @@
+[Unit]
+Description=Run {{ status_service_name }}.service every 5 minutes
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=5min
+Unit={{ status_service_name }}.service
+
+[Install]
+WantedBy=timers.target

@@ -16,7 +16,21 @@ For now:
 - put them in their respective directories
 - restart PDS via systemctl
 
-There is a `Makefile` that might give you some hints.
+## Deploy with Ansible
+
+Prereqs: `ansible-core` 2.20+ available locally and SSH access to the target host.
+
+1. Copy `ansible/inventory.sample.ini` to `ansible/inventory.ini` and set `ansible_host` (and any path overrides) for your host in the `pds` group.
+2. Adjust defaults in `ansible/group_vars/all.yml` if your remote paths differ (e.g., `pds_directory`, `status_output_path`).
+3. Run the play:
+
+```shell
+ansible-playbook -i ansible/inventory.ini ansible/site.yml
+```
+
+Extras:
+- Run the status generator immediately: `ansible-playbook ... -e status_run_once=true`.
+- Restart the `pds` systemd unit as part of the run: `ansible-playbook ... -e pds_restart=true`.
 
 To get Caddy to use your webroot and not its internal one, add this to `compose.yaml`:
 ```diff
