@@ -2,12 +2,14 @@
 
 ## 2025-11-24
 
-- chore: add GEMINI.md 
+- chore: add GEMINI.md
+- fix(ansible): refine roles
+- fix(ansible): simplify layout
 
 ## 2025-11-22
 
-- feat: switch Docker to user defined networking
-- feat: switch to provisioning with Ansible
+- feat(docker): switch to user defined networking
+- feat(ansible): switch to provisioning with Ansible
 
 ## 2025-11-18
 

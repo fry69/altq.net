@@ -47,9 +47,9 @@
 # Operation Mapping
 | User Intent | Mapped Command | Context |
 | :--- | :--- | :--- |
-| **Run / Deploy Project** | `ansible-playbook ansible/site.yml -i <inventory>` | Full deployment via Ansible. |
-| **Update Caddy Config** | `ansible-playbook ansible/site.yml -i <inventory> --tags caddy` | Updates Caddy config & webroot only. |
-| **Update Status Script** | `ansible-playbook ansible/site.yml -i <inventory> --tags status` | Updates status script & systemd units. |
-| **Restart PDS Service** | `ansible-playbook ansible/site.yml -i <inventory> --tags pds -e pds_restart=true` | Restarts the PDS systemd service. |
-| **Generate Status Page** | `ansible-playbook ansible/site.yml -i <inventory> --tags status,run_once -e status_run_once=true` | Manually triggers status page generation. |
+| **Run / Deploy Project** | `ansible-playbook site.yml -i <inventory>` | Full deployment via Ansible. |
+| **Update Caddy Config** | `ansible-playbook site.yml -i <inventory> --tags caddy` | Updates Caddy config & webroot only. |
+| **Update Status Script** | `ansible-playbook site.yml -i <inventory> --tags status` | Updates status script & systemd units. |
+| **Restart PDS Service** | `ansible-playbook site.yml -i <inventory> --tags pds -e pds_restart=true` | Restarts the PDS systemd service. |
+| **Generate Status Page** | `ansible-playbook site.yml -i <inventory> --tags status,run_once -e status_run_once=true` | Manually triggers status page generation. |
 | **Check Status** | `ssh <host> "systemctl status pds"` | Checks PDS systemd service status (manual). |
