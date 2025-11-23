@@ -1,46 +1,38 @@
-## Makefile for
-## - preparing files to upload to the PDS server
-## - uploading them
-## - simple server management
+## Makefile for PDS deployment via Ansible
 ##
-## Requires ssh setup to loing as root into the PDS server
-## and server name as set as SSH_HOSTNAME in .env file.
-##
-## Bugs:
-## - hardcoded paths
-
-ifeq ("$(wildcard .env)","")
-$(error "No .env file found. Please copy .env.example to .env and fill it out.")
-endif
+## Requires:
+## - Ansible installed
+## - ansible/inventory.ini configured (or passed via ANSIBLE_ARGS)
+## - .env file for local variables (optional, mostly for PDS_HOSTNAME)
 
 include .env
-## Exporting environment variables to sub-shells is not necessary
-# export
 
-all: copy-status copy-caddy install-timer
+ANSIBLE_CMD = ansible-playbook site.yml
 
-copy-status:
-	scp bin/generate-status.py $(SSH_HOSTNAME):$(dir $(STATUS_SCRIPT_PATH))
+.PHONY: all deploy caddy status-script restart generate status fmt version
 
-copy-caddy: fmt
-	scp caddy/etc/Caddyfile $(SSH_HOSTNAME):$(PDS_DIRECTORY)/caddy/etc/caddy
-	scp caddy/webroot/* $(SSH_HOSTNAME):$(PDS_WEBROOT)
+all: deploy
+
+deploy:
+	$(ANSIBLE_CMD)
+
+caddy:
+	$(ANSIBLE_CMD) --tags caddy
+
+status-script:
+	$(ANSIBLE_CMD) --tags status
+
+restart:
+	$(ANSIBLE_CMD) --tags pds -e pds_restart=true
+
+generate:
+	$(ANSIBLE_CMD) --tags status,run_once -e status_run_once=true
+
+status:
+	ansible pds -a "systemctl status pds"
 
 fmt:
 	caddy fmt --overwrite --config caddy/etc/Caddyfile
-
-install-timer:
-	@echo "Installing timer service."
-	@(cat .env | grep STATUS ; cat install-timer.sh) | ssh $(SSH_HOSTNAME) "bash -s"
-
-generate: copy-status
-	ssh $(SSH_HOSTNAME) "$(STATUS_SCRIPT_PATH) --pds-config $(PDS_DIRECTORY)/pds.env --output $(STATUS_OUTPUT_PATH)"
-
-restart:
-	ssh $(SSH_HOSTNAME) "systemctl restart pds"
-
-status:
-	ssh $(SSH_HOSTNAME) "systemctl status pds"
 
 version:
 	curl -s https://$(PDS_HOSTNAME)/xrpc/_health

@@ -5,6 +5,7 @@
 - chore: add GEMINI.md
 - fix(ansible): refine roles
 - fix(ansible): simplify layout
+- fix(ansible): adjust Makefile
 
 ## 2025-11-22
 
