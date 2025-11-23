@@ -23,7 +23,6 @@
 > Agents must **NEVER** auto-execute the following without explicit user confirmation:
 > - Ansible Playbooks (`ansible-playbook`, `*.yml`)
 > - Shell Scripts (`*.sh`) that modify system state
-> - Make targets that involve `ssh` or `scp`
 > - Docker Compose commands that alter running containers
 >
 > **Always** ask for approval before running commands that modify the remote server state.
@@ -31,6 +30,7 @@
 # File Classification
 **Active (Orchestration & Scripts):**
 - `site.yml` - Main Ansible Playbook for deployment.
+- `Makefile` - Convenience wrapper for Ansible commands (primary interface).
 - `install-timer.sh` - Script to install systemd timer for status reporting.
 - `bin/generate-status.py` - Python script for generating status reports.
 
@@ -41,15 +41,14 @@
 - `ansible/templates/*.j2` - Jinja2 templates for systemd units.
 - `pds.env` / `pds.redacted.env` - Environment variable definitions.
 
-**Legacy / Deprecated:**
-- `Makefile` - Old task runner (do not use for new deployments).
-
 # Operation Mapping
 | User Intent | Mapped Command | Context |
 | :--- | :--- | :--- |
-| **Run / Deploy Project** | `ansible-playbook site.yml -i <inventory>` | Full deployment via Ansible. |
-| **Update Caddy Config** | `ansible-playbook site.yml -i <inventory> --tags caddy` | Updates Caddy config & webroot only. |
-| **Update Status Script** | `ansible-playbook site.yml -i <inventory> --tags status` | Updates status script & systemd units. |
-| **Restart PDS Service** | `ansible-playbook site.yml -i <inventory> --tags pds -e pds_restart=true` | Restarts the PDS systemd service. |
-| **Generate Status Page** | `ansible-playbook site.yml -i <inventory> --tags status,run_once -e status_run_once=true` | Manually triggers status page generation. |
-| **Check Status** | `ssh <host> "systemctl status pds"` | Checks PDS systemd service status (manual). |
+| **Run / Deploy Project** | `make deploy` | Full deployment via Ansible (`ansible-playbook site.yml`). |
+| **Dry Run / Preview Changes** | `make dry-run` | Shows what would change without applying (`--check --diff`). |
+| **Update Caddy Config** | `make caddy` | Updates Caddy config & webroot only (`--tags caddy`). |
+| **Update Status Script** | `make status-script` | Updates status script & systemd units (`--tags status`). |
+| **Restart PDS Service** | `make restart` | Restarts the PDS systemd service (`--tags pds -e pds_restart=true`). |
+| **Generate Status Page** | `make generate` | Manually triggers status page generation (`--tags status,run_once`). |
+| **Check PDS Health** | `make version` | Checks PDS health endpoint (`--tags health`). |
+| **Check Service Status** | `make status` | Checks PDS systemd service status (via `ansible pds -a`). |

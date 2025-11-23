@@ -16,41 +16,42 @@ For now:
 - put them in their respective directories
 - restart PDS via systemctl
 
-## Deploy with Ansible
+## Quick Start
 
-Prereqs: `ansible-core` 2.20+ available locally and SSH access to the target host.
+Prereqs:
+- `ansible-core` 2.20+ installed locally
+- SSH access to your PDS server as root
 
-1. Copy `ansible/inventory.sample.ini` to `ansible/inventory.ini` and set `ansible_host` (and any path overrides) for your host in the `pds` group.
-2. Adjust defaults in `ansible/group_vars/all.yml` if your remote paths differ (e.g., `pds_directory`, `status_output_path`).
-3. Run the play:
+1. **Configure inventory**: Copy `ansible/inventory.sample.ini` to `ansible/inventory.ini` and set your server's hostname, SSH port, and any optional variables.
 
-```shell
-ansible-playbook -i ansible/inventory.ini ansible/site.yml
-```
+2. **Configure variables**: Edit `ansible/group_vars/all.yml` to set your `pds_hostname` and adjust any path defaults if needed.
 
-Extras:
-- Run the status generator immediately: `ansible-playbook ... -e status_run_once=true`.
-- Restart the `pds` systemd unit as part of the run: `ansible-playbook ... -e pds_restart=true`.
+3. **Deploy**:
+   ```shell
+   make deploy        # Full deployment
+   make dry-run       # Preview changes without applying
+   ```
 
-To get Caddy to use your webroot and not its internal one, add this to `compose.yaml`:
-```diff
---- orig/compose.yaml
-+++ compose.yaml
-@@ -14,6 +14,9 @@
-       - type: bind
-         source: /pds/caddy/etc/caddy
-         target: /etc/caddy
-+      - type: bind
-+        source: /pds/caddy/webroot
-+        target: /srv/webroot
-   pds:
-     container_name: pds
-     image: ghcr.io/bluesky-social/pds:0.4
-```
+### Available Commands
 
-Note: The `generate-status.py` script needs the Python `psutil` library. Install it with e.g.
-```shell
-apt install python3-psutil
-```
+| Command | Description |
+|---------|-------------|
+| `make deploy` | Deploy all changes to the server |
+| `make dry-run` | Preview what would change (doesn't modify server) |
+| `make caddy` | Update only Caddy configuration |
+| `make status-script` | Update only the status script |
+| `make restart` | Restart the PDS service |
+| `make generate` | Manually trigger status page generation |
+| `make version` | Check PDS health |
+| `make status` | Check PDS service status |
+
+### Notes
+
+- The `generate-status.py` script requires Python's `psutil` library:
+  ```shell
+  apt install python3-psutil
+  ```
+
+- Caddy webroot configuration is already included in `compose.yaml`
 
 License: MIT
