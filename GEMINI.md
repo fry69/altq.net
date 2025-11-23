@@ -39,7 +39,6 @@
 
 - `site.yml` - Main Ansible Playbook for deployment.
 - `Makefile` - Convenience wrapper for Ansible commands (primary interface).
-- `install-timer.sh` - Script to install systemd timer for status reporting.
 - `bin/generate-status.py` - Python script for generating status reports.
 
 **Passive (Configuration & Definitions):**

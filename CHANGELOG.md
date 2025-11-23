@@ -7,6 +7,7 @@
 - fix(ansible): simplify layout
 - fix(ansible): adjust Makefile
 - fix(ansible): finish conversion
+- chore: remove install-timer.sh
 
 ## 2025-11-22
 
