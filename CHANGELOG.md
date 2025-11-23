@@ -1,5 +1,9 @@
 # Changelog
 
+## 2025-11-24
+
+- chore: add GEMINI.md 
+
 ## 2025-11-22
 
 - feat: switch Docker to user defined networking
