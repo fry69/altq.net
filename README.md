@@ -1,16 +1,18 @@
-## PDS Modifications for https://altq.net
+## PDS Modifications for <https://altq.net>
 
 Please read the official PDS installation [README](https://github.com/bluesky-social/pds/blob/main/README.md) first.
 
 Goals:
+
 - allow serving a custom web page on the PDS root
 - generate a status page for the PDS including account usage
 
-See https://altq.net/status.html how it looks (hopefully boring enough)
+See <https://altq.net/status.html> how it looks (hopefully boring enough)
 
 Detailed explanations: TBD
 
 For now:
+
 - my PDS runs on Ubuntu 24.04
 - read and modify the files appropriately
 - put them in their respective directories
@@ -19,6 +21,7 @@ For now:
 ## Quick Start
 
 Prereqs:
+
 - `ansible-core` 2.20+ installed locally
 - SSH access to your PDS server as root
 
@@ -27,6 +30,7 @@ Prereqs:
 2. **Configure variables**: Edit `ansible/group_vars/all.yml` to set your `pds_hostname` and adjust any path defaults if needed.
 
 3. **Deploy**:
+
    ```shell
    make deploy        # Full deployment
    make dry-run       # Preview changes without applying
@@ -48,6 +52,7 @@ Prereqs:
 ### Notes
 
 - The `generate-status.py` script requires Python's `psutil` library:
+
   ```shell
   apt install python3-psutil
   ```
