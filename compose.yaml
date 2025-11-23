@@ -4,7 +4,8 @@ services:
     container_name: caddy
     image: caddy:2
     depends_on:
-      - pds
+      pds:
+        condition: service_healthy
     restart: unless-stopped
     ports:
       - "${CADDY_PUB_IPV4:-0.0.0.0}:80:80"
@@ -37,6 +38,12 @@ services:
         target: /pds
     env_file:
       - /pds/pds.env
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000/xrpc/_health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
   watchtower:
     container_name: watchtower
     image: ghcr.io/nicholas-fedor/watchtower:latest
@@ -58,6 +65,10 @@ services:
       - "127.0.0.1:8080:8080"
     networks:
       - front
+    environment:
+      - PDS_DATA_DIRECTORY=/pds
+      - PDS_BASE_URL=http://pds:3000
+      - GATEKEEPER_HOST=0.0.0.0
     # This gives the container to the access to the PDS folder.
     # Source is the location on your server of that directory.
     volumes:

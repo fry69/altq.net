@@ -6,6 +6,7 @@
 - fix(ansible): refine roles
 - fix(ansible): simplify layout
 - fix(ansible): adjust Makefile
+- fix(ansible): finish conversion
 
 ## 2025-11-22
 

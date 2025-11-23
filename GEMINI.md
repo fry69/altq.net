@@ -1,7 +1,7 @@
 # Project Identity
 **Type:** Infrastructure-as-Code (IaC) Deployment Template
 **Description:** This repository is a deployment template for a remote server environment. It is NOT a standard software application with a build step.
-**Context:** Many configuration files (e.g., `.env`, `pds.env`, `*.j2`) are redacted or templated. These should be treated as placeholders or intended for runtime substitution, not as syntax errors or missing secrets.
+**Context:** Many configuration files (e.g., `pds.env`, `*.j2`) are redacted or templated. These should be treated as placeholders or intended for runtime substitution, not as syntax errors or missing secrets.
 
 # Stack Detection
 **Container Services:**
@@ -30,7 +30,7 @@
 
 # File Classification
 **Active (Orchestration & Scripts):**
-- `ansible/site.yml` - Main Ansible Playbook for deployment.
+- `site.yml` - Main Ansible Playbook for deployment.
 - `install-timer.sh` - Script to install systemd timer for status reporting.
 - `bin/generate-status.py` - Python script for generating status reports.
 

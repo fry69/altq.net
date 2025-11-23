@@ -1,10 +1,11 @@
 ---
+pds_hostname: altq.net # CHANGE THIS to your actual domain
 pds_directory: /pds
 pds_webroot: /pds/caddy/webroot
 pds_env_path: "{{ pds_directory }}/pds.env"
 
 status_script_path: /usr/local/bin/generate-status.py
-status_output_path: /pds/status.html
+status_output_path: /pds/caddy/webroot/status.html
 status_service_name: status-report
 status_timer_name: status-report
 

@@ -25,6 +25,14 @@
       tags: [files]
 
   tasks:
+    - name: Deploy Docker Compose environment file
+      ansible.builtin.template:
+        src: ansible/templates/compose.env.j2
+        dest: "{{ pds_directory }}/.env"
+        mode: "0600"
+      notify: restart pds
+      tags: [compose]
+
     - name: Deploy Docker Compose definition
       ansible.builtin.copy:
         src: compose.yaml
@@ -106,3 +114,24 @@
       ansible.builtin.command:
         cmd: docker compose -f {{ pds_directory }}/compose.yaml exec -w /etc/caddy caddy caddy reload
       changed_when: true
+
+- name: Health Check
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tags: [health]
+  tasks:
+    - name: Check PDS health
+      ansible.builtin.uri:
+        url: "https://{{ pds_hostname }}/xrpc/_health"
+        return_content: true
+      check_mode: false
+      register: health_check
+      until: health_check.status == 200
+      retries: 18
+      delay: 10
+      failed_when: health_check.status != 200
+
+    - name: Print health status
+      ansible.builtin.debug:
+        msg: "PDS is healthy: {{ health_check.content }}"
