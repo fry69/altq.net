@@ -9,6 +9,7 @@
 - fix(ansible): finish conversion
 - chore: remove install-timer.sh
 - fix(ansible): deploy PDS environment file
+- docs: update README
 
 ## 2025-11-22
 

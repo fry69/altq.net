@@ -1,28 +1,26 @@
-## PDS Modifications for <https://altq.net>
+# PDS Modifications for <https://altq.net>
 
 Please read the official PDS installation [README](https://github.com/bluesky-social/pds/blob/main/README.md) first.
 
-Goals:
+## Main goals
 
-- allow serving a custom web page on the PDS root
-- generate a status page for the PDS including account usage
+- automate PDS configuration deployment
+- allow serving a custom web page on PDS root
+- generate a status page for PDS including account usage
+  (see <https://altq.net/status.html>, hopefully boring enough)
 
-See <https://altq.net/status.html> how it looks (hopefully boring enough)
+## Features
 
-Detailed explanations: TBD
-
-For now:
-
-- my PDS runs on Ubuntu 24.04
-- read and modify the files appropriately
-- put them in their respective directories
-- restart PDS via systemctl
+- age restriction workaround, see [here](https://gist.github.com/mary-ext/6e27b24a83838202908808ad528b3318#method-5-self-hosted-pds)
+- 2FA using [gatekeeper](https://tangled.org/baileytownsend.dev/pds-gatekeeper)
+- CAR estimate
 
 ## Quick Start
 
-Prereqs:
+### Prerequisites
 
-- `ansible-core` 2.20+ installed locally
+- installed PDS server (see [README](https://github.com/bluesky-social/pds/blob/main/README.md))
+- `ansible` 2.19+ installed locally (e.g. `brew install ansible`)
 - SSH access to your PDS server as root
 
 1. **Configure inventory**: Copy `ansible/inventory.sample.ini` to `ansible/inventory.ini` and set your server's hostname, SSH port, and any optional variables.
@@ -32,8 +30,8 @@ Prereqs:
 3. **Deploy**:
 
    ```shell
-   make deploy        # Full deployment
    make dry-run       # Preview changes without applying
+   make deploy        # Full deployment
    ```
 
 ### Available Commands
@@ -49,7 +47,7 @@ Prereqs:
 | `make version` | Check PDS health |
 | `make status` | Check PDS service status |
 
-### Notes
+## Notes
 
 - The `generate-status.py` script requires Python's `psutil` library:
 
@@ -59,4 +57,6 @@ Prereqs:
 
 - Caddy webroot configuration is already included in `compose.yaml`
 
-License: MIT
+## License
+
+MIT, see [LICENSE](LICENSE).
