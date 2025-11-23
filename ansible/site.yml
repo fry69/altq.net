@@ -1,7 +1,7 @@
 ---
 - name: Deploy PDS host
   hosts: pds
-  become: true
+
   gather_facts: false
 
   vars:
@@ -25,25 +25,33 @@
       tags: [files]
 
   tasks:
-    - name: Deploy Caddy configuration
+    - name: Deploy Docker Compose definition
       ansible.builtin.copy:
-        src: caddy/etc/Caddyfile
-        dest: "{{ pds_directory }}/caddy/etc/caddy/Caddyfile"
+        src: ../compose.yaml
+        dest: "{{ pds_directory }}/compose.yaml"
         mode: "0644"
       notify: restart pds
+      tags: [compose]
+
+    - name: Deploy Caddy configuration
+      ansible.builtin.copy:
+        src: ../caddy/etc/Caddyfile
+        dest: "{{ pds_directory }}/caddy/etc/caddy/Caddyfile"
+        mode: "0644"
+      notify: reload caddy
       tags: [caddy]
 
     - name: Deploy Caddy webroot assets
       ansible.builtin.copy:
-        src: caddy/webroot/
+        src: ../caddy/webroot/
         dest: "{{ pds_webroot }}/"
         mode: "0644"
-      notify: restart pds
+      notify: reload caddy
       tags: [caddy]
 
     - name: Deploy status script
       ansible.builtin.copy:
-        src: bin/generate-status.py
+        src: ../bin/generate-status.py
         dest: "{{ status_script_path }}"
         mode: "0755"
       tags: [status]
@@ -93,3 +101,8 @@
       ansible.builtin.systemd:
         name: "{{ pds_systemd_service }}"
         state: restarted
+
+    - name: reload caddy
+      ansible.builtin.command:
+        cmd: docker compose -f {{ pds_directory }}/compose.yaml exec -w /etc/caddy caddy caddy reload
+      changed_when: true
