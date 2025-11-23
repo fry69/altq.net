@@ -8,6 +8,7 @@
 - fix(ansible): adjust Makefile
 - fix(ansible): finish conversion
 - chore: remove install-timer.sh
+- fix(ansible): deploy PDS environment file
 
 ## 2025-11-22
 

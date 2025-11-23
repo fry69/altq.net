@@ -33,6 +33,14 @@
       notify: restart pds
       tags: [compose]
 
+    - name: Deploy PDS environment file
+      ansible.builtin.copy:
+        src: pds.env
+        dest: "{{ pds_env_path }}"
+        mode: "0600"
+      notify: restart pds
+      tags: [pds_env, pds]
+
     - name: Deploy Docker Compose definition
       ansible.builtin.copy:
         src: compose.yaml
