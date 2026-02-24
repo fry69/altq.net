@@ -1,19 +1,12 @@
-version: '3.9'
+version: "3.9"
 services:
   caddy:
     container_name: caddy
     image: caddy:2
+    network_mode: host
     depends_on:
-      pds:
-        condition: service_healthy
+      - pds
     restart: unless-stopped
-    ports:
-      - "${CADDY_PUB_IPV4:-0.0.0.0}:80:80"
-      - "[${CADDY_PUB_IPV6:-::}]:80:80"
-      - "${CADDY_PUB_IPV4:-0.0.0.0}:443:443"
-      - "[${CADDY_PUB_IPV6:-::}]:443:443"
-    networks:
-      - front
     volumes:
       - type: bind
         source: /pds/caddy/data
@@ -27,28 +20,18 @@ services:
   pds:
     container_name: pds
     image: ghcr.io/bluesky-social/pds:0.4
+    network_mode: host
     restart: unless-stopped
-    ports:
-      - "127.0.0.1:3000:3000"
-    networks:
-      - front
     volumes:
       - type: bind
         source: /pds
         target: /pds
     env_file:
       - /pds/pds.env
-    healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000/xrpc/_health"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 30s
   watchtower:
     container_name: watchtower
     image: ghcr.io/nicholas-fedor/watchtower:latest
-    networks:
-      - front
+    network_mode: host
     volumes:
       - type: bind
         source: /var/run/docker.sock
@@ -60,14 +43,11 @@ services:
   gatekeeper:
     container_name: gatekeeper
     image: fatfingers23/pds_gatekeeper:latest
+    network_mode: host
     restart: unless-stopped
-    ports:
-      - "127.0.0.1:8080:8080"
-    networks:
-      - front
     environment:
       - PDS_DATA_DIRECTORY=/pds
-      - PDS_BASE_URL=http://pds:3000
+      - PDS_BASE_URL=http://localhost:3000
       - GATEKEEPER_HOST=0.0.0.0
     # This gives the container to the access to the PDS folder.
     # Source is the location on your server of that directory.
@@ -77,13 +57,3 @@ services:
         target: /pds
     depends_on:
       - pds
-
-networks:
-  front:
-    driver: bridge
-    driver_opts:
-      com.docker.network.enable_ipv6: "true"
-    ipam:
-      config:
-        - subnet: 172.30.0.0/24
-        - subnet: fd00:30::/64

@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-02-24
+
+- revert docker networking to host mode
+
 ## 2025-11-24
 
 - chore: add GEMINI.md
